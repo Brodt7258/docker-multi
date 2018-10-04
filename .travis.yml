@@ -15,8 +15,21 @@ after_success:
   - docker build -t brodt7258/multi-worker ./worker
 
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  
+
   - docker push brodt7258/multi-client
   - docker push brodt7258/multi-nginx
   - docker push brodt7258/multi-server
   - docker push brodt7258/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-1
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: elasticbeanstalk-us-east-1-352364227643
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
